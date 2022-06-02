@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1806                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+cuttingPlaneNusseltWalls
+{
+    type            surfaces;
+    libs            ("libsampling.so");
+    timeStart           30;
+    timeEnd             60;
+    writeControl    outputTime;
+
+    surfaceFormat   vtk;
+    fields          (nusseltTotalMean nusseltOneMean nusseltTwoMean);
+
+    interpolationScheme cellPoint;
+
+    surfaces
+    (
+        topWall
+        {
+            type            patch;
+            patches         (ceiling);
+            interpolate     false;
+        }
+        bottomWall 
+        {
+            type            patch;
+            patches         (floor);
+            interpolate     false;
+        }
+    );
+}
+
+// ************************************************************************* //

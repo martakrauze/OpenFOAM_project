@@ -1,0 +1,148 @@
+// -*- C++ -*-
+
+// ************************************************************************* //
+
+// Transcribe volume fields to surfaces.
+fieldTransfer
+{
+    type    surfMeshes;
+    libs    ("libsampling.so");
+    log     true;
+    timeStart           30;
+    timeEnd             60;
+    writeControl    none;
+    createOnRead    true;
+    executeControl  timeStep;
+    executeInterval 1;
+
+    fields      (nusseltTotalMean nusseltOneMean nusseltTwoMean);
+
+//    _plane
+//    {
+//        type    plane;
+//        source  cells;
+//
+//        planeType   pointAndNormal;
+//
+//        pointAndNormalDict
+//        {
+//            normal (0 0 0);
+//            point  (0 0 0);
+//        }
+//    }
+
+    surfaces
+    (
+        middle
+        {
+            type    plane;
+            source  cells;        
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0 0);
+                normal  (0 1 0);
+            }
+            interpolate     false;
+        }
+        top
+        {
+            type    plane;
+            source  cells;        
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0.0116485 0); //2 X boundary layer
+                normal  (0 1 0);
+            }
+            interpolate     false;
+        }
+        bottom
+        {
+            type    plane;
+            source  cells;        
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 -0.0116485 0);
+                normal  (0 1 0);
+            }
+            interpolate     false;
+        }
+        veryTop
+        {
+            type    plane;
+            source  cells;        
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 0.0168742 0); // 1 X boundary layer
+                normal  (0 1 0);
+            }
+            interpolate     false;
+        }
+        veryBottom
+        {
+            type    plane;
+            source  cells;        
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0 -0.0168742 0);
+                normal  (0 1 0);
+            }
+            interpolate     false;
+        }
+    );
+}
+
+areaAveragePlaneMiddle
+{
+    ${__surfaceFieldValue}
+
+    regionType      surface;
+    name            middle;
+
+    operation       areaAverage;
+    fields          ( nusseltOneMean nusseltTwoMean nusseltTotalMean );
+}
+areaAveragePlaneTop
+{
+    ${__surfaceFieldValue}
+
+    regionType      surface;
+    name            top;
+
+    operation       areaAverage;
+    fields          ( nusseltOneMean nusseltTwoMean nusseltTotalMean );
+}
+areaAveragePlaneBottom
+{
+    ${__surfaceFieldValue}
+
+    regionType      surface;
+    name            bottom;
+
+    operation       areaAverage;
+    fields          ( nusseltOneMean nusseltTwoMean nusseltTotalMean );
+}
+areaAveragePlaneVeryTop
+{
+    ${__surfaceFieldValue}
+
+    regionType      surface;
+    name            veryTop;
+
+    operation       areaAverage;
+    fields          ( nusseltOneMean nusseltTwoMean nusseltTotalMean );
+}
+areaAveragePlaneVeryBottom
+{
+    ${__surfaceFieldValue}
+
+    regionType      surface;
+    name            veryBottom;
+
+    operation       areaAverage;
+    fields          ( nusseltOneMean nusseltTwoMean nusseltTotalMean );
+}

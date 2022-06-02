@@ -1,0 +1,125 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5                                     |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     lowMachBuoyantPimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         60;
+
+deltaT          1e-2;
+
+writeControl    adjustableRunTime;
+
+writeInterval   5;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  yes;
+
+maxCo           0.1;
+
+#include "sampleControls"
+
+functions
+{
+    fieldAverage1
+    {
+        type            fieldAverage;
+        libs            ("libfieldFunctionObjects.so");
+        timeStart           30;
+        timeEnd             60;
+        writeControl    writeTime;
+
+        fields
+        (
+            nonDimU
+            {
+                mean        on;
+                prime2Mean  on; //RMS
+                base        time;
+            }
+
+            nonDimT
+            {
+                mean        on;
+                prime2Mean  on; //RMS
+                base        time;
+            }
+
+            nusseltTotal
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            nusseltOne
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+            nusseltTwo
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+
+        );
+    }
+
+    volAverageNusseltField
+    {
+        type            volFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+        log             true;
+        timeStart           30;
+        timeEnd             60;
+        writeControl    writeTime;
+        writeFields     true;
+        regionType      all;
+        operation       volAverage;
+        fields
+        (
+	    nusseltOneMean
+            nusseltTwoMean
+            nusseltTotalMean
+        );
+    }
+
+//    #include "cuttingPlaneNusseltWalls"
+    #include "fieldTransfer"
+}
+
+// ************************************************************************* //
